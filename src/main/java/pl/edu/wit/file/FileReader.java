@@ -1,5 +1,8 @@
 package pl.edu.wit.file;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +18,8 @@ import java.util.List;
  */
 public class FileReader {
 
+    private static final Logger log = LogManager.getLogger(FileReader.class.getName());
+
     /**
      * this method will list all files available in the provided directory and its subdirectories
      *
@@ -22,7 +27,7 @@ public class FileReader {
      * @return list of all {@link java.io.File} found in that directory, including subdirectories
      */
     public static List<File> getAllFiles(String pathName) {
-        System.out.println("Reading files from " + pathName);
+        log.info("Reading files from: '" + pathName + "'");
 
         File directory = new File(pathName);
 
