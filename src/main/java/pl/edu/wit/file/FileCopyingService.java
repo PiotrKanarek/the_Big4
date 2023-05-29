@@ -28,7 +28,8 @@ public class FileCopyingService implements AutoCloseable {
      * under the 'pool-size' key, or default to size=3 if the relevant property cannot be obtained
      */
     public FileCopyingService() {
-        String poolSizeProperty = PropertySource.getProperty("pool-size");
+        PropertySource propertySource = new PropertySource("src/main/resources/application.properties");
+        String poolSizeProperty = propertySource.getProperty("pool-size");
 
         // default pool size value that will be applied if a relevant configuration property is unavailable
         int poolSize = 3;
@@ -53,23 +54,10 @@ public class FileCopyingService implements AutoCloseable {
      * @return number of files which were successfully copied over
      */
     public int copyFiles(String sourceDirectory, String destinationDirectory) {
-        List<File> jpgFiles = FileReader.getAllFiles(sourceDirectory)
+        List<Callable<Boolean>> fileCopyingTasks = FileReader.getFilesToBeCopied(sourceDirectory)
                 .stream()
-                .filter(file -> file.getName().endsWith(".jpg"))
+                .map(fileToBeCopied -> new FileCopyingTask(fileToBeCopied, destinationDirectory))
                 .collect(Collectors.toList());
-
-        if (jpgFiles.size() == 0) {
-            log.info("No '.jpg' files found in the provided directory: '" + sourceDirectory + "'");
-            return 0;
-        }
-
-        log.info("Found " + jpgFiles.size() + " '.jpg' files to be copied");
-
-        List<Callable<Boolean>> fileCopyingTasks = new ArrayList<>();
-
-        for (File fileToBeCopied : jpgFiles) {
-            fileCopyingTasks.add(new FileCopyingTask(fileToBeCopied, destinationDirectory));
-        }
 
         List<Future<Boolean>> processingResults;
 

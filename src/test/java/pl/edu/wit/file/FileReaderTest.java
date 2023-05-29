@@ -16,16 +16,26 @@ class FileReaderTest {
     @Test
     void readAllFilesTest(@TempDir Path tempDir) throws IOException {
         // given
-        Files.createFile(tempDir.resolve("jpgFile1.jpg"));
-        Files.createFile(tempDir.resolve("jpgFile2.jpg"));
+        Files.createFile(tempDir.resolve("jpgFile.jpg"));
+        Files.createFile(tempDir.resolve("csvFile.csv"));
+        Files.createFile(tempDir.resolve("txtFile.txt"));
         Files.createDirectory(Path.of(tempDir + "/subfolder"));
-        Files.createFile(tempDir.resolve(Path.of(tempDir + "/subfolder/jpgFile3.jpg")));
+        Files.createFile(tempDir.resolve(Path.of(tempDir + "/subfolder/jpgFile2.jpg")));
 
         // when
-        List<File> actual = FileReader.getAllFiles(tempDir.toString());
+        List<File> actual = FileReader.getFilesToBeCopied(tempDir.toString());
 
         // then
-        assertEquals(4, actual.size());
+        assertEquals(2, actual.size());
+    }
+
+    @Test
+    void readAllFilesNullPathTest() {
+        // when
+        List<File> actual = FileReader.getFilesToBeCopied(null);
+
+        // then
+        assertEquals(0, actual.size());
     }
 
 }
