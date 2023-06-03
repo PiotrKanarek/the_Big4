@@ -7,28 +7,44 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * class serving as a source of properties for the application, responsible for loading {@link Properties} from
+ * the specified file and providing access to the properties
+ *
+ * @author Katarzyna Nowak
+ */
 public class PropertySource {
 
     private static final Logger log = LogManager.getLogger(PropertySource.class.getName());
 
+    private final Properties properties;
+
     /**
-     * this method will try to load properties from 'resources/application.properties' and extract the requested property;
-     * if loading fails, of if the requested property key is not found among the loaded properties, null will be returned
+     * this constructor will initialize a {@link Properties} object and attempt to load properties from the file
+     * in the specified path; if loading the file fails, properties will remain empty
      *
-     * @param propertyKey key (name) of the required property
-     * @return value from the 'application.properties' config file corresponding to the requested key
-     * or 'null' if value was unavailable (e.g. file was not loaded properly or it didn't contain the required key mapping)
+     * @param path path to the properties file which should be loaded as the property source
      */
-    public static String getProperty(String propertyKey) {
-        Properties properties = new Properties();
+    public PropertySource(String path) {
+        this.properties = new Properties();
 
         try {
-            properties.load(new FileInputStream("src/main/resources/application.properties"));
-        } catch (IOException e) {
-            log.error("Unable to load properties from path: 'src/main/resources/application.properties' - " + e.getMessage());
-            e.printStackTrace();
+            log.info("Loading properties from '" + path + "'");
+            properties.load(new FileInputStream(path));
+        } catch (IOException | NullPointerException e) {
+            log.error("Unable to load properties from provided path: '" + path + "' - " + e.getMessage());
         }
+    }
 
+    /**
+     * extract property corresponding to the provided key from the underlying {@link Properties};
+     * if no mapping for the requested key is found, null will be returned
+     *
+     * @param propertyKey key (name) of the required property
+     * @return {@link String} value from the available properties corresponding to the requested key, or 'null' if value was unavailable
+     * (e.g. file was not loaded properly, or it didn't contain the required key mapping)
+     */
+    public String getProperty(String propertyKey) {
         return (String) properties.get(propertyKey);
     }
 

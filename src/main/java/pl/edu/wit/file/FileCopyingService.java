@@ -2,18 +2,17 @@ package pl.edu.wit.file;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import pl.edu.wit.config.PropertySource;
 
-import java.io.File;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * <p>
  * service class which orchestrates the core file copying logic
- * </p>
  *
  * @author Katarzyna Nowak
  */
@@ -27,72 +26,50 @@ public class FileCopyingService implements AutoCloseable {
      * initialize the underlying ExecutorService with a thread pool size as defined in the 'application.properties' file
      * under the 'pool-size' key, or default to size=3 if the relevant property cannot be obtained
      */
-    public FileCopyingService() {
-        String poolSizeProperty = PropertySource.getProperty("pool-size");
-
-        // default pool size value that will be applied if a relevant configuration property is unavailable
-        int poolSize = 3;
-
-        try {
-            poolSize = Integer.parseInt(poolSizeProperty);
-        } catch (NumberFormatException e) {
-            log.warn("Unable to get pool size from property source (expected valid int, found: " +
-                    poolSizeProperty + "), will default to " + poolSize);
+    public FileCopyingService(ExecutorService executorService) {
+        if (executorService == null) {
+            throw new RuntimeException("Constructor parameter 'executorService' was null, unable to instantiate FileCopyingService");
         }
-
-        log.info("Starting ExecutorService with a thread pool size = " + poolSize);
-        this.executorService = Executors.newFixedThreadPool(poolSize);
+        this.executorService = executorService;
     }
 
     /**
-     * this method will examine the provided source directory & its subdirectories
-     * and copy any .jpg files to the provided destination directory
+     * examine the provided source directory & its subdirectories and copy any .jpg files to the provided destination directory
      *
      * @param sourceDirectory      path to the source directory containing the .jpg files to be copied
      * @param destinationDirectory path to the destination directory (where the copied files will be placed)
      * @return number of files which were successfully copied over
      */
     public int copyFiles(String sourceDirectory, String destinationDirectory) {
-        List<File> jpgFiles = FileReader.getAllFiles(sourceDirectory)
+        List<FileCopyingTask> fileCopyingTasks = FileReader.getFilesToBeCopied(sourceDirectory)
                 .stream()
-                .filter(file -> file.getName().endsWith(".jpg"))
+                .map(fileToBeCopied -> new FileCopyingTask(fileToBeCopied, destinationDirectory))
                 .collect(Collectors.toList());
 
-        if (jpgFiles.size() == 0) {
-            log.info("No '.jpg' files found in the provided directory: '" + sourceDirectory + "'");
-            return 0;
-        }
+        return fileCopyingTasks.isEmpty() ? 0 : countSuccessful(executeTasks(fileCopyingTasks));
+    }
 
-        log.info("Found " + jpgFiles.size() + " '.jpg' files to be copied");
-
-        List<Callable<Boolean>> fileCopyingTasks = new ArrayList<>();
-
-        for (File fileToBeCopied : jpgFiles) {
-            fileCopyingTasks.add(new FileCopyingTask(fileToBeCopied, destinationDirectory));
-        }
-
+    private List<Future<Boolean>> executeTasks(List<FileCopyingTask> fileCopyingTasks) {
         List<Future<Boolean>> processingResults;
-
         try {
             processingResults = executorService.invokeAll(fileCopyingTasks);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            log.error("Unable to copy files due to unexpected exception: " + e.getMessage());
+            return Collections.emptyList();
         }
+        return processingResults;
+    }
 
+    private int countSuccessful(List<Future<Boolean>> processingResults) {
         int filesCopied = 0;
 
         for (Future<Boolean> result : processingResults) {
             try {
-                if (result.get()) {
-                    filesCopied++;
-                }
+                if (result.get()) filesCopied++;
             } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+                log.error("Unable to determine the result of file copying task due to " + e.getMessage());
             }
-
         }
-
-        log.info("Successfully copied " + filesCopied + " files");
         return filesCopied;
     }
 
