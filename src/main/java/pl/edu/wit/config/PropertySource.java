@@ -7,6 +7,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * class serving as a source of properties for the application, responsible for loading {@link Properties} from
+ * the specified file and providing access to the properties
+ *
+ * @author Katarzyna Nowak
+ */
 public class PropertySource {
 
     private static final Logger log = LogManager.getLogger(PropertySource.class.getName());

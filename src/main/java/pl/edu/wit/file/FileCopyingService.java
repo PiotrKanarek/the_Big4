@@ -2,18 +2,13 @@ package pl.edu.wit.file;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import pl.edu.wit.config.PropertySource;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
- * <p>
  * service class which orchestrates the core file copying logic
- * </p>
  *
  * @author Katarzyna Nowak
  */
@@ -27,27 +22,12 @@ public class FileCopyingService implements AutoCloseable {
      * initialize the underlying ExecutorService with a thread pool size as defined in the 'application.properties' file
      * under the 'pool-size' key, or default to size=3 if the relevant property cannot be obtained
      */
-    public FileCopyingService() {
-        PropertySource propertySource = new PropertySource("src/main/resources/application.properties");
-        String poolSizeProperty = propertySource.getProperty("pool-size");
-
-        // default pool size value that will be applied if a relevant configuration property is unavailable
-        int poolSize = 3;
-
-        try {
-            poolSize = Integer.parseInt(poolSizeProperty);
-        } catch (NumberFormatException e) {
-            log.warn("Unable to get pool size from property source (expected valid int, found: " +
-                    poolSizeProperty + "), will default to " + poolSize);
-        }
-
-        log.info("Starting ExecutorService with a thread pool size = " + poolSize);
-        this.executorService = Executors.newFixedThreadPool(poolSize);
+    public FileCopyingService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 
     /**
-     * this method will examine the provided source directory & its subdirectories
-     * and copy any .jpg files to the provided destination directory
+     * examine the provided source directory & its subdirectories and copy any .jpg files to the provided destination directory
      *
      * @param sourceDirectory      path to the source directory containing the .jpg files to be copied
      * @param destinationDirectory path to the destination directory (where the copied files will be placed)
@@ -58,6 +38,10 @@ public class FileCopyingService implements AutoCloseable {
                 .stream()
                 .map(fileToBeCopied -> new FileCopyingTask(fileToBeCopied, destinationDirectory))
                 .collect(Collectors.toList());
+
+        if (fileCopyingTasks.isEmpty()) {
+            return 0;
+        }
 
         List<Future<Boolean>> processingResults;
 

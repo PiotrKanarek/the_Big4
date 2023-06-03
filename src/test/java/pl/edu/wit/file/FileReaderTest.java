@@ -11,10 +11,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * @author Katarzyna Nowak
+ */
 class FileReaderTest {
 
     @Test
-    void readAllFilesTest(@TempDir Path tempDir) throws IOException {
+    void readAllFilesTest_validPath(@TempDir Path tempDir) throws IOException {
         // given
         Files.createFile(tempDir.resolve("jpgFile.jpg"));
         Files.createFile(tempDir.resolve("csvFile.csv"));
@@ -30,7 +33,7 @@ class FileReaderTest {
     }
 
     @Test
-    void readAllFilesNullPathTest() {
+    void readAllFilesTest_nullPath() {
         // when
         List<File> actual = FileReader.getFilesToBeCopied(null);
 

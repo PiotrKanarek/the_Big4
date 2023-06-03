@@ -19,6 +19,8 @@ public class FileReader {
 
     private static final Logger log = LogManager.getLogger(FileReader.class.getName());
 
+    private FileReader() { }
+
     /**
      * this method will return a List of relevant '.jpg' files found in the provided directory (or its subdirectories)
      *
