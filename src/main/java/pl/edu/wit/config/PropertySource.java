@@ -31,8 +31,8 @@ public class PropertySource {
         try {
             log.info("Loading properties from '" + path + "'");
             properties.load(new FileInputStream(path));
-        } catch (IOException e) {
-            log.error("Unable to load properties from '" + path + "' - " + e.getMessage());
+        } catch (IOException | NullPointerException e) {
+            log.error("Unable to load properties from provided path: '" + path + "' - " + e.getMessage());
         }
     }
 

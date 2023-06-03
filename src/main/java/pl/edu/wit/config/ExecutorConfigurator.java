@@ -15,7 +15,8 @@ public class ExecutorConfigurator {
 
     private static final Logger log = LogManager.getLogger(ExecutorConfigurator.class.getName());
 
-    private ExecutorConfigurator() { }
+    private ExecutorConfigurator() {
+    }
 
     /**
      * utility method for obtaining a configured {@link ExecutorService}
@@ -25,16 +26,17 @@ public class ExecutorConfigurator {
      * or with a default size=3 if the relevant property is not available
      */
     public static ExecutorService getConfiguredExecutor(PropertySource propertySource) {
-        String poolSizeProperty = propertySource.getProperty("pool-size");
-
         // default pool size value that will be applied if a relevant configuration property is unavailable
         int poolSize = 3;
 
-        try {
-            poolSize = Integer.parseInt(poolSizeProperty);
-        } catch (NumberFormatException e) {
-            log.warn("Unable to get pool size from property source (expected valid int, found: " +
-                    poolSizeProperty + "), will default to " + poolSize);
+        if (propertySource != null) {
+            String poolSizeProperty = propertySource.getProperty("pool-size");
+            try {
+                poolSize = Integer.parseInt(poolSizeProperty);
+            } catch (NumberFormatException e) {
+                log.warn("Unable to get pool size from property source (expected valid int, found: " +
+                        poolSizeProperty + "), will default to " + poolSize);
+            }
         }
 
         log.info("Starting ExecutorService with a fixed thread pool of size=" + poolSize);

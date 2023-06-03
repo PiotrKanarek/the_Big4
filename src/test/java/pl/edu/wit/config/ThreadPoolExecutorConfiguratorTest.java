@@ -45,4 +45,16 @@ class ThreadPoolExecutorConfiguratorTest {
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) actual;
         assertEquals(3, threadPoolExecutor.getCorePoolSize());
     }
+
+    @Test
+    void threadPoolConfiguratorTest_propertySourceNull() {
+        // when
+        ExecutorService actual = ExecutorConfigurator.getConfiguredExecutor(null);
+
+        // then
+        assertEquals(actual.getClass(), ThreadPoolExecutor.class);
+
+        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) actual;
+        assertEquals(3, threadPoolExecutor.getCorePoolSize());
+    }
 }

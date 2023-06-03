@@ -1,13 +1,6 @@
 package pl.edu.wit.config;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -17,25 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class PropertySourceTest {
 
-    private static Path tempDir;
-
-    @BeforeAll
-    public static void before() throws IOException {
-        tempDir = Files.createTempDirectory(null);
-    }
-
-    @AfterAll
-    public static void after() {
-        tempDir.toFile().delete();
-    }
-
     @Test
-    void getPropertyTest_validSource() throws IOException {
+    void getPropertyTest_validSource() {
         // given
-        File propertyFile = new File(tempDir.toFile(), "application.properties");
-        Files.write(propertyFile.toPath(), "pool-size=5".getBytes());
-
-        PropertySource propertySource = new PropertySource(tempDir + "/application.properties");
+        PropertySource propertySource = new PropertySource("src/test/resources/test.properties");
 
         // when
         String actual = propertySource.getProperty("pool-size");
@@ -47,7 +25,19 @@ class PropertySourceTest {
     @Test
     void getPropertyTest_invalidSource() {
         // given
-        PropertySource propertySource = new PropertySource("");
+        PropertySource propertySource = new PropertySource("nonexistent");
+
+        // when
+        String actual = propertySource.getProperty("");
+
+        // then
+        assertNull(actual);
+    }
+
+    @Test
+    void getPropertyTest_nullSource() {
+        // given
+        PropertySource propertySource = new PropertySource(null);
 
         // when
         String actual = propertySource.getProperty("");

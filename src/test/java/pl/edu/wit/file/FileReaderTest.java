@@ -33,6 +33,15 @@ class FileReaderTest {
     }
 
     @Test
+    void readAllFilesTest_invalidPath() {
+        // when
+        List<File> actual = FileReader.getFilesToBeCopied("nonexistent");
+
+        // then
+        assertEquals(0, actual.size());
+    }
+
+    @Test
     void readAllFilesTest_nullPath() {
         // when
         List<File> actual = FileReader.getFilesToBeCopied(null);
