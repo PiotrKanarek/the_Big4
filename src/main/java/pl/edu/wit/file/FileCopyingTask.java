@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.concurrent.Callable;
 
@@ -31,22 +32,12 @@ public class FileCopyingTask implements Callable<Boolean> {
     }
 
     /**
-     * This method is responsible for performing a copy of the file to the destination folder when called.
-     *
-     * @return true if the file exists; false if the file does not exist or its existence cannot be determined
-     * @see java.util.concurrent.Callable
-     */
-    @Override
-    public Boolean call() {
-        return copyFile();
-    }
-
-    /**
      * Copies provided file to the destination directory.
      *
      * @return true if the file exists; false if the file does not exist or its existence cannot be determined
      */
-    synchronized private Boolean copyFile() {
+    @Override
+    public Boolean call() {
         String targetDirectory = createTargetDirectory();
 
         if (targetDirectory == null) {
@@ -55,7 +46,8 @@ public class FileCopyingTask implements Callable<Boolean> {
         }
 
         try {
-            return Files.exists(Files.copy(file.toPath(), Path.of(targetDirectory)));
+            Path path = Files.copy(file.toPath(), Path.of(targetDirectory), StandardCopyOption.REPLACE_EXISTING);
+            return Files.exists(path);
 
         } catch (SecurityException | UnsupportedOperationException | IOException e) {
             log.error("Unable to copy file due to " + e.getMessage());
