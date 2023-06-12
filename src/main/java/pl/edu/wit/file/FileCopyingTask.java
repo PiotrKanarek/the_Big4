@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Callable;
 
@@ -46,8 +48,11 @@ public class FileCopyingTask implements Callable<Boolean> {
         }
 
         try {
-            Path path = Files.copy(file.toPath(), Path.of(targetDirectory), StandardCopyOption.REPLACE_EXISTING);
-            return Files.exists(path);
+            Path path = Path.of(targetDirectory);
+            Path target = path.resolve(file.getName());
+            Path resultPath = Files.copy(file.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
+
+            return Files.exists(resultPath);
 
         } catch (SecurityException | UnsupportedOperationException | IOException e) {
             log.error("Unable to copy file due to " + e.getMessage());
@@ -73,9 +78,11 @@ public class FileCopyingTask implements Callable<Boolean> {
             return null;
         }
 
-        String targetDirectory = destinationFolder + File.pathSeparator + date;
-        File subfolder = new File(targetDirectory);
-        subfolder.mkdir();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String parsedDate = dateFormat.format(date);
+
+        String targetDirectory = destinationFolder + File.pathSeparatorChar + parsedDate;
+        new File(targetDirectory).mkdirs();
 
         return targetDirectory;
     }
@@ -93,7 +100,14 @@ public class FileCopyingTask implements Callable<Boolean> {
 
         try {
             Metadata metadata = JpegMetadataReader.readMetadata(file);
-            ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+            ExifSubIFDDirectory directory;
+
+            if (metadata.containsDirectoryOfType(ExifSubIFDDirectory.class)) {
+                directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+            } else {
+                log.error("File at " + file.getPath() + " does not contain exif date, unable to get Date");
+                return null;
+            }
 
             return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
 
