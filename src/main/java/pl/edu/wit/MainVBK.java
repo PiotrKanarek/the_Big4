@@ -1,10 +1,11 @@
-package Projekt;
+package pl.edu.wit;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import pl.edu.wit.file.FilesGUI;
 
 public class MainVBK {
 	

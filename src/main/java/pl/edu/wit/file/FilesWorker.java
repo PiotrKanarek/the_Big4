@@ -4,6 +4,9 @@ import javax.swing.SwingWorker;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import pl.edu.wit.config.ExecutorConfigurator;
+import pl.edu.wit.config.PropertySource;
+
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -29,9 +32,9 @@ public class FilesWorker extends SwingWorker<Integer, Integer> {
 		this.gui = gui;
 	}
 
-	
+
 	/**
-	 * Executes files copying process as time consuming in additional thread.
+	 * Executes files copying process as time-consuming in additional thread.
 	 */
 	@Override
 	protected Integer doInBackground() throws Exception {
