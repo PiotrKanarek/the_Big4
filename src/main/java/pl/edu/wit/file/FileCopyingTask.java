@@ -1,9 +1,5 @@
 package pl.edu.wit.file;
 
-import com.drew.imaging.ImageProcessingException;
-import com.drew.imaging.jpeg.JpegMetadataReader;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -12,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.FileTime;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -81,7 +78,7 @@ public class FileCopyingTask implements Callable<Boolean> {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String parsedDate = dateFormat.format(date);
 
-        String targetDirectory = destinationFolder + File.pathSeparatorChar + parsedDate;
+        String targetDirectory = destinationFolder + File.separator + parsedDate;
         new File(targetDirectory).mkdirs();
 
         return targetDirectory;
@@ -99,21 +96,14 @@ public class FileCopyingTask implements Callable<Boolean> {
         }
 
         try {
-            Metadata metadata = JpegMetadataReader.readMetadata(file);
-            ExifSubIFDDirectory directory;
+            FileTime creationTime = (FileTime) Files.getAttribute(file.toPath(), "creationTime");
 
-            if (metadata.containsDirectoryOfType(ExifSubIFDDirectory.class)) {
-                directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-            } else {
-                log.error("File at " + file.getPath() + " does not contain exif date, unable to get Date");
-                return null;
-            }
-
-            return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
-
-        } catch (ImageProcessingException | IOException | NullPointerException e) {
-            log.error("Unable to read metadata from the provided file due to : " + e.getMessage());
+            return Date.from(creationTime.toInstant());
+        } catch (IOException | NullPointerException e) {
+            log.error("Unable to get metadata from file, due to " + e.getMessage());
             return null;
         }
     }
+
+
 }
