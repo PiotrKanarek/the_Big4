@@ -30,7 +30,7 @@ public class FileReader {
     public static List<File> getFilesToBeCopied(String sourceDirectory) {
         List<File> jpgFiles = getAllFiles(sourceDirectory)
                 .stream()
-                .filter(file -> file.getName().endsWith(".jpg"))
+                .filter(file -> file.getName().toLowerCase().endsWith(".jpg"))
                 .collect(Collectors.toList());
 
         log.info("Found " + jpgFiles.size() + " '.jpg' files to be copied");
