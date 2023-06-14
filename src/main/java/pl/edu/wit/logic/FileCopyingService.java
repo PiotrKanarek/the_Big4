@@ -1,4 +1,4 @@
-package pl.edu.wit.file;
+package pl.edu.wit.logic;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -23,8 +23,8 @@ public class FileCopyingService implements AutoCloseable {
     private final ExecutorService executorService;
 
     /**
-     * initialize the underlying ExecutorService with a thread pool size as defined in the 'application.properties' file
-     * under the 'pool-size' key, or default to size=3 if the relevant property cannot be obtained
+     * constructor which initializes the underlying {@link ExecutorService} with the one provided as parameter
+     * @param executorService {@link ExecutorService} which will be used by the FileCopyingService to execute {@link FileCopyingTask}s
      */
     public FileCopyingService(ExecutorService executorService) {
         if (executorService == null) {
@@ -34,7 +34,7 @@ public class FileCopyingService implements AutoCloseable {
     }
 
     /**
-     * examine the provided source directory & its subdirectories and copy any .jpg files to the provided destination directory
+     * examine the provided source directory & its subdirectories and copy any files with '.jpg' extension to the provided destination directory
      *
      * @param sourceDirectory      path to the source directory containing the .jpg files to be copied
      * @param destinationDirectory path to the destination directory (where the copied files will be placed)
@@ -49,6 +49,10 @@ public class FileCopyingService implements AutoCloseable {
         return fileCopyingTasks.isEmpty() ? 0 : countSuccessful(executeTasks(fileCopyingTasks));
     }
 
+    /**
+     * execute {@link FileCopyingTask}s using thread pool executor
+     * @return {@link List} of {@link Future}s representing the results of {@link FileCopyingTask} execution
+     */
     private List<Future<Boolean>> executeTasks(List<FileCopyingTask> fileCopyingTasks) {
         List<Future<Boolean>> processingResults;
         try {
@@ -60,6 +64,10 @@ public class FileCopyingService implements AutoCloseable {
         return processingResults;
     }
 
+    /**
+     * count successful results of the executed {@link FileCopyingTask}s, i.e. how many files were reported as copied successfully
+     * @return number of successfully copied files
+     */
     private int countSuccessful(List<Future<Boolean>> processingResults) {
         int filesCopied = 0;
 

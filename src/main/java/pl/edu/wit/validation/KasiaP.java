@@ -1,4 +1,4 @@
-package pl.edu.wit.file;
+package pl.edu.wit.validation;
 
 import javax.swing.JTextField;
 

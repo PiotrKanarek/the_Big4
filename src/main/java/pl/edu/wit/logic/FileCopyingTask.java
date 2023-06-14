@@ -1,4 +1,4 @@
-package pl.edu.wit.file;
+package pl.edu.wit.logic;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -48,6 +48,8 @@ public class FileCopyingTask implements Callable<Boolean> {
             Path path = Path.of(targetDirectory);
             Path target = path.resolve(file.getName());
             Path resultPath = Files.copy(file.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
+
+            log.debug("Copying " + file + " to " + target);
 
             return Files.exists(resultPath);
 

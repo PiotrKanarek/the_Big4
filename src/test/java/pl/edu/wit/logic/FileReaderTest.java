@@ -1,4 +1,4 @@
-package pl.edu.wit.file;
+package pl.edu.wit.logic;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

@@ -1,4 +1,4 @@
-package pl.edu.wit.file;
+package pl.edu.wit.logic;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -19,10 +19,12 @@ public class FileReader {
 
     private static final Logger log = LogManager.getLogger(FileReader.class.getName());
 
-    private FileReader() { }
+    private FileReader() {
+        // constructor is private because this class is not supposed to be instantiated (utility class)
+    }
 
     /**
-     * this method will return a List of relevant '.jpg' files found in the provided directory (or its subdirectories)
+     * this method will return a List of relevant files (with '.jpg' extension) found in the provided directory (or its subdirectories)
      *
      * @param sourceDirectory path to the directory that is to be examined
      * @return list of all {@link java.io.File} with '.jpg' extension found (or an empty list if no relevant files were found)

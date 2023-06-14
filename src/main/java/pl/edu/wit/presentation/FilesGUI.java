@@ -1,4 +1,6 @@
-package pl.edu.wit.file;
+package pl.edu.wit.presentation;
+
+import pl.edu.wit.validation.KasiaP;
 
 import java.awt.Color;
 import java.awt.Dimension;
