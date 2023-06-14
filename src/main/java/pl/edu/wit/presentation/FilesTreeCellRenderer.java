@@ -1,4 +1,4 @@
-package pl.edu.wit.file;
+package pl.edu.wit.presentation;
 
 import java.awt.Component;
 import java.io.File;

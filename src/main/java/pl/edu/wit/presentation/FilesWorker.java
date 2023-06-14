@@ -1,9 +1,13 @@
-package pl.edu.wit.file;
+package pl.edu.wit.presentation;
 
 import javax.swing.SwingWorker;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import pl.edu.wit.config.ExecutorConfigurator;
+import pl.edu.wit.config.PropertySource;
+import pl.edu.wit.logic.FileCopyingService;
+
 import java.util.concurrent.ExecutorService;
 
 /**

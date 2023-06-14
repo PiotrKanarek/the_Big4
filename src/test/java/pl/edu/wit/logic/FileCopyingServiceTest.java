@@ -1,4 +1,4 @@
-package pl.edu.wit.file;
+package pl.edu.wit.logic;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class FileCopyingServiceTest {
 
-    private final ArgumentCaptor<List<FileCopyingTask>> taskListCaptor = ArgumentCaptor.forClass(List.class);
+    private final ArgumentCaptor<List<FileCopyingTask>> taskListArgumentCaptor = ArgumentCaptor.forClass(List.class);
     private final ExecutorService mockExecutorService = mock(ExecutorService.class);
 
     @Test
@@ -50,7 +50,7 @@ class FileCopyingServiceTest {
     void copyFilesTest_rightAmountOfTasksCreated(@TempDir Path tempDir) throws IOException, InterruptedException {
         // given
         populateTempDirWithJsonFiles(tempDir);
-        doReturn(new ArrayList<>()).when(mockExecutorService).invokeAll(taskListCaptor.capture());
+        doReturn(new ArrayList<>()).when(mockExecutorService).invokeAll(taskListArgumentCaptor.capture());
 
         // when
         try (FileCopyingService service = new FileCopyingService(mockExecutorService)) {
@@ -58,7 +58,7 @@ class FileCopyingServiceTest {
         }
 
         // then
-        assertEquals(3, taskListCaptor.getValue().size());
+        assertEquals(3, taskListArgumentCaptor.getValue().size());
     }
 
     @Test

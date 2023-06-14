@@ -1,4 +1,4 @@
-package pl.edu.wit.file;
+package pl.edu.wit.logic;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;

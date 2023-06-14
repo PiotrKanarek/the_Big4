@@ -16,14 +16,15 @@ public class ExecutorConfigurator {
     private static final Logger log = LogManager.getLogger(ExecutorConfigurator.class.getName());
 
     private ExecutorConfigurator() {
+        // constructor is private because this class is not supposed to be instantiated (utility clas
     }
 
     /**
      * utility method for obtaining a configured {@link ExecutorService}
      *
      * @param propertySource {@link PropertySource} from which the required thread pool size should be read
-     * @return {@link ExecutorService} configured with a fixed thread pool of appropriate size defined in the properties,
-     * or with a default size=3 if the relevant property is not available
+     * @return {@link ExecutorService} configured with a fixed thread pool of appropriate size,
+     * or with a default size=3 if the relevant property (pool-size) is not available in the provided {@link PropertySource}
      */
     public static ExecutorService getConfiguredExecutor(PropertySource propertySource) {
         // default pool size value that will be applied if a relevant configuration property is unavailable
