@@ -13,7 +13,7 @@ class PropertySourceTest {
     @Test
     void getPropertyTest_validSource() {
         // given
-        PropertySource propertySource = new PropertySource("src/test/resources/test.properties");
+        PropertySource propertySource = new PropertySource("test.properties");
 
         // when
         String actual = propertySource.getProperty("pool-size");
