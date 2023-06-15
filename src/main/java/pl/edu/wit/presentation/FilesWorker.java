@@ -45,7 +45,7 @@ public class FilesWorker extends SwingWorker<Integer, Integer> {
 		//Destination path
         String destinationDirectory = gui.getPathTo();
 
-        PropertySource propertySource = new PropertySource("src/main/resources/application.properties");
+        PropertySource propertySource = new PropertySource("application.properties");
         ExecutorService executorService = ExecutorConfigurator.getConfiguredExecutor(propertySource);
 
         try (FileCopyingService copyingService = new FileCopyingService(executorService)) {

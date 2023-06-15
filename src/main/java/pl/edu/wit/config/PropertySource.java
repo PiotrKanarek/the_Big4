@@ -3,7 +3,6 @@ package pl.edu.wit.config;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -20,19 +19,19 @@ public class PropertySource {
     private final Properties properties;
 
     /**
-     * this constructor will initialize a {@link Properties} object and attempt to load properties from the file
-     * in the specified path; if loading the file fails, properties will remain empty
+     * this constructor will initialize a {@link Properties} object and attempt to load properties from the specified file;
+     * if loading the file fails, properties will remain empty
      *
-     * @param path path to the properties file which should be loaded as the property source
+     * @param fileName properties file which should be loaded as the property source
      */
-    public PropertySource(String path) {
+    public PropertySource(String fileName) {
         this.properties = new Properties();
 
         try {
-            log.info("Loading properties from '" + path + "'");
-            properties.load(new FileInputStream(path));
+            log.info("Loading properties from '" + fileName + "'");
+            properties.load(PropertySource.class.getResourceAsStream("/" + fileName));
         } catch (IOException | NullPointerException e) {
-            log.error("Unable to load properties from provided path: '" + path + "' - " + e.getMessage());
+            log.error("Unable to load properties from '" + fileName + "' - " + e.getMessage());
         }
     }
 
