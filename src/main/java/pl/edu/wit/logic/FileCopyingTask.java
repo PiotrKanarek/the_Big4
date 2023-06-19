@@ -12,6 +12,7 @@ import java.nio.file.attribute.FileTime;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 /**
@@ -22,7 +23,9 @@ import java.util.concurrent.Callable;
 public class FileCopyingTask implements Callable<Boolean> {
 
     private static final Logger log = LogManager.getLogger(FileCopyingTask.class.getName());
+    //File to copy
     private final File file;
+    //The path to which the file will be copied
     private final String destinationFolder;
 
     public FileCopyingTask(File file, String destinationFolder) {
@@ -46,7 +49,7 @@ public class FileCopyingTask implements Callable<Boolean> {
 
         try {
             Path path = Path.of(targetDirectory);
-            Path target = path.resolve(file.getName());
+            Path target = path.resolve(getNameForFile(targetDirectory));
             Path resultPath = Files.copy(file.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
 
             log.debug("Copying " + file + " to " + target);
@@ -84,6 +87,29 @@ public class FileCopyingTask implements Callable<Boolean> {
         new File(targetDirectory).mkdirs();
 
         return targetDirectory;
+    }
+
+    /**
+     * Gets a new name for the file. The name created is another integer value.
+     *
+     * @param directory target directory to which the file will be copied
+     * @return integer value for filename
+     */
+    private String getNameForFile(String directory) {
+        synchronized (FileCopyingService.mapFolders) {
+            Map<String, Integer> mapFolders = FileCopyingService.mapFolders;
+
+            if (mapFolders.containsKey(directory)) {
+                int counter = mapFolders.get(directory);
+                counter++;
+                int finalCounter = counter;
+                mapFolders.compute(directory, (k, v) -> (v == null ? 0 : finalCounter));
+                return counter + ".jpg";
+            } else {
+                mapFolders.compute(directory, (k, v) -> (v == null ? 0 : 1));
+                return "1.jpg";
+            }
+        }
     }
 
     /**
