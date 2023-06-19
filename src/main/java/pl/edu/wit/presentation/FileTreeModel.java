@@ -15,10 +15,15 @@ import javax.swing.tree.TreePath;
  */
 class FileTreeModel implements TreeModel {
 
-	//Root of each JTree. One root for each root directory
+	/**
+	 * Root of each JTree. One root for each root directory
+	 */
 	private File root;
 
-	//Constructor with root drive as parameter
+	/**
+	 * Constructor with root drive as parameter
+	 * @param path One of root drives
+	 */
 	public FileTreeModel(String path) {
 		root = new File(path);
 	}

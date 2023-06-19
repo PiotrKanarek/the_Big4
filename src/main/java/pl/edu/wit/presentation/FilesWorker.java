@@ -18,16 +18,27 @@ import java.util.concurrent.ExecutorService;
  */
 public class FilesWorker extends SwingWorker<Integer, Integer> {
 
-	// Component's text will be updated with number of copied files
+	/**
+	 *  Component's text will be updated with number of copied files
+	 */
 	private WaitWindow wait = null;
-	// FilesGUI object with paths entered by user, which are necessary for files copying process.
+	
+	/**
+	 *  FilesGUI object with paths entered by user, which are necessary for files copying process.
+	 */
 	private FilesGUI gui = null;
 	private static final Logger log = LogManager.getLogger(FilesWorker.class.getName());
-	// Number of copied files by the application. Will be used by wait window to provide final
-	// feedback to user.
+	
+	/**
+	 *  Number of copied files by the application. Will be used by wait window to provide final feedback to user.
+	 */
 	int filesCopied = 0;
 
-	// Constructor
+	/**
+	 *  Constructor
+	 * @param wait WaitWindow which will provide feedback to user
+	 * @param gui Main FilesGUI wit all the GUI components
+	 */
 	public FilesWorker(WaitWindow wait, FilesGUI gui) {
 		this.wait = wait;
 		this.gui = gui;
@@ -40,9 +51,13 @@ public class FilesWorker extends SwingWorker<Integer, Integer> {
 	@Override
 	protected Integer doInBackground() throws Exception {
 
-		//Source path
+		/**
+		 * Source path
+		 */
 		String sourceDirectory = gui.getPathFrom();
-		//Destination path
+		/**
+		 * Destination path
+		 */
         String destinationDirectory = gui.getPathTo();
 
         PropertySource propertySource = new PropertySource("application.properties");
