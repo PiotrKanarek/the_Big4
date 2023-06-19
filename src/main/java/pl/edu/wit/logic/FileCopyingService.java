@@ -5,10 +5,8 @@ import org.apache.log4j.Logger;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +19,7 @@ public class FileCopyingService implements AutoCloseable {
     private static final Logger log = LogManager.getLogger(FileCopyingService.class.getName());
 
     private final ExecutorService executorService;
+    public static final Map<String, Integer> mapFolders = new ConcurrentHashMap<>();
 
     /**
      * constructor which initializes the underlying {@link ExecutorService} with the one provided as parameter
