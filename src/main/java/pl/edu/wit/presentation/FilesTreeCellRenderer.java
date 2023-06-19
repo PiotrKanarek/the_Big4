@@ -11,6 +11,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  * @author Bartłomiej Kilim
  *
  */
+@SuppressWarnings("serial")
 class FilesTreeCellRenderer extends DefaultTreeCellRenderer {
 		
 	/**

@@ -34,29 +34,48 @@ import javax.swing.event.TreeSelectionListener;
  * 
  */
 public class FilesGUI {
-	// Component which contains directory tree for each root drive
+	/**
+	 *  Component which contains directory tree for each root drive
+	 */
 	private JTree fileTree = null;
-	// Set of fileTrees, only purpose is to clear selection for trees which are not source of
-	// current action.
+	/**
+	 *  Set of fileTrees, only purpose is to clear selection for trees which are not source of current action.
+	 */
 	private Set<JTree> treeSet = null;
-	// Main container of GUI
+	/**
+	 *  Main container of GUI
+	 */
 	private JFrame frame = null;
-	// Component with source path
+	/**
+	 *  Component with source path
+	 */
 	private JTextField fieldFrom = null;
-	// Component with destination path
+	/**
+	 *  Component with destination path
+	 */
 	private JTextField fieldTo = null;
-	// Object to store source path
+	/**
+	 *  Object to store source path
+	 */
 	private String pathFrom = null;
-	// Object to store destination path
+	/**
+	 *  Object to store destination path
+	 */
 	private String pathTo = null;
-	// Fonts used by GUI components
+	/**
+	 *  Fonts used by GUI components
+	 */
 	Font font = new Font(Font.DIALOG, Font.PLAIN, 14);
 	Font font2 = new Font(Font.DIALOG, Font.PLAIN, 20);
 	Font font3 = new Font(Font.DIALOG, Font.PLAIN, 45);
-	// GUI main button, which action start validation and files copying logic
+	/**
+	 *  GUI main button, which action start validation and files copying logic
+	 */
 	private JButton startButton = null;
 
-	// GUI constructor
+	/**
+	 *  GUI constructor
+	 */
 	public FilesGUI() {
 
 		frame = new JFrame();
@@ -66,7 +85,9 @@ public class FilesGUI {
 		frame.setTitle("FilesUI");
 
 		frame.setLayout(new GridBagLayout());
-		//Constraints used to spread out three JPanels in GUI main frame
+		/**
+		 * Constraints used to spread out three JPanels in GUI main frame
+		 */
 		GridBagConstraints constraints = new GridBagConstraints();
 
 		JScrollPane fTree = new JScrollPane(plantFileTreePanel());
@@ -98,10 +119,14 @@ public class FilesGUI {
 	private JPanel plantFileTreePanel() {
 
 		treeSet = new HashSet<>();
-		// Container which stores all the file trees.
+		/**
+		 *  Container which stores all the file trees.
+		 */
 		JPanel panelTrees = new JPanel();
 		panelTrees.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Resources"));
-		// Array of active root drives used during file tree creation.
+		/**
+		 *  Array of active root drives used during file tree creation.
+		 */
 		File[] rootDrive = File.listRoots();
 		panelTrees.setLayout(new GridLayout(1, rootDrive.length));
 
@@ -111,7 +136,9 @@ public class FilesGUI {
 
 			fileTree.addTreeSelectionListener(new TreeSelectionListener() {
 				public void valueChanged(TreeSelectionEvent e) {
-					// Tree which is the source of event.
+					/**
+					 *  Tree which is the source of event.
+					 */
 					JTree eventTree = (JTree) e.getSource();
 					for (JTree tree : treeSet) {
 						if (tree != eventTree) {
@@ -136,7 +163,9 @@ public class FilesGUI {
 	 * @return JPanel with source and destination paths and buttons to copy paths.
 	 */
 	private JPanel makeFromToPathPanel() {
-		// Main container
+		/**
+		 *  Main container
+		 */
 		JPanel panelFT = new JPanel(new GridLayout(2, 1));
 		fieldFrom = new JTextField(42);
 		fieldFrom.setName("fieldFrom");
@@ -145,18 +174,29 @@ public class FilesGUI {
 		fieldFrom.setFont(font);
 		fieldTo.setFont(font);
 
-		//Container for JTextField and JButton
+		/**
+		 * Container for JTextField and JButton
+		 */
 		JPanel panelFrom = new JPanel();
-		//Button used to set path selected in JTree as source path for JTextField
+		/**
+		 * Button used to set path selected in JTree as source path for JTextField
+		 */
 		JButton bFrom = new JButton("From");
 
-		//Sets path selected in JTree as source path for JTextField
+		/**
+		 * Sets path selected in JTree as source path for JTextField
+		 */
 		bFrom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				boolean selected = false;
 				for (JTree tree : treeSet) {
 					if (!tree.isSelectionEmpty()) {
 						fieldFrom.setText(tree.getSelectionPath().getLastPathComponent().toString());
+						selected = true;
 					}
+				}
+				if (!selected) {
+					JOptionPane.showMessageDialog(frame, "Please sellect a resource path first.");
 				}
 			}
 		});
@@ -166,18 +206,30 @@ public class FilesGUI {
 		panelFrom.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Path From"));
 		bFrom.setPreferredSize(new Dimension(60, 30));
 		
-		//Container for JTextField and JButton
+		/**
+		 * Container for JTextField and JButton
+		 */
 		JPanel panelTo = new JPanel();
-		//Button used to set path selected in JTree as destination path for JTextField
+		
+		/**
+		 * Button used to set path selected in JTree as destination path for JTextField
+		 */
 		JButton bTo = new JButton("To");
 
-		//Sets path selected in JTree as destination path for JTextField
+		/**
+		 * Sets path selected in JTree as destination path for JTextField
+		 */
 		bTo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				boolean selected = false;
 				for (JTree tree : treeSet) {
 					if (!tree.isSelectionEmpty()) {
 						fieldTo.setText(tree.getSelectionPath().getLastPathComponent().toString());
+						selected = true;
 					}
+				}
+				if (!selected) {
+					JOptionPane.showMessageDialog(frame, "Please sellect a resource path first.");
 				}
 			}
 		});
@@ -198,7 +250,9 @@ public class FilesGUI {
 	 */
 	private JPanel makeStartButton() {
 
-		//Container for Start button
+		/**
+		 * Container for Start button
+		 */
 		JPanel panelStartB = new JPanel(new GridLayout(1, 1));
 		panelStartB.setPreferredSize(new Dimension(500, 50));
 		startButton = new JButton("START");
@@ -207,38 +261,40 @@ public class FilesGUI {
 		startButton.setFont(font3);
 		panelStartB.add(startButton);
 
-		//Event which launches application's validation and copying functionality
+		/**
+		 * Event which launches application's validation and copying functionality
+		 */
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 /////////////////////////////////////////////////////////////////////////////////
 				KasiaP kasiaP = new KasiaP();
-				boolean fieldFromWalid = kasiaP.walidacja(fieldFrom);
-				boolean fieldToWalid = kasiaP.walidacja(fieldTo);
+				boolean fieldFromValid = kasiaP.walidacja(fieldFrom);
+				boolean fieldToValid = kasiaP.walidacja(fieldTo);
 /////////////////////////////////////////////////////////////////////////////////
-				if (!fieldFromWalid && !fieldToWalid) {
+				if (!fieldFromValid && !fieldToValid) {
 					JOptionPane.showMessageDialog(frame, "Provided paths are incorrect");
 					fieldFrom.setBorder(BorderFactory.createLineBorder(Color.red));
 					fieldTo.setBorder(BorderFactory.createLineBorder(Color.red));
 				}
 
-				else if (!fieldFromWalid) {
+				else if (!fieldFromValid) {
 					JOptionPane.showMessageDialog(frame, "Provided path is incorrect");
 					fieldFrom.setBorder(BorderFactory.createLineBorder(Color.red));
 				}
 
-				else if (!fieldToWalid) {
+				else if (!fieldToValid) {
 					JOptionPane.showMessageDialog(frame, "Provided path is incorrect");
 					fieldTo.setBorder(BorderFactory.createLineBorder(Color.red));
 				}
 
-				if (fieldFromWalid) {
+				if (fieldFromValid) {
 					fieldFrom.setBorder(BorderFactory.createLineBorder(Color.gray));
 				}
-				if (fieldToWalid) {
+				if (fieldToValid) {
 					fieldTo.setBorder(BorderFactory.createLineBorder(Color.gray));
 				}
 
-				if (fieldFromWalid && fieldToWalid) {
+				if (fieldFromValid && fieldToValid) {
 
 					pathFrom = fieldFrom.getText().toString();
 					pathTo = fieldTo.getText().toString();
@@ -248,7 +304,9 @@ public class FilesGUI {
 					startButton.setEnabled(false);
 					frame.setEnabled(false);
 
-					//Window with files copying feedback, during and after.
+					/**
+					 * Window with files copying feedback, during and after.
+					 */
 					WaitWindow wait = new WaitWindow(FilesGUI.this);
 					new FilesWorker(wait, FilesGUI.this).execute();
 

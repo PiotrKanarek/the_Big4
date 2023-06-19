@@ -22,22 +22,39 @@ import javax.swing.border.LineBorder;
  */
 public class WaitWindow {
 
-	// Displays feedback info
+	/**
+	 *  Displays feedback info
+	 */
 	private JLabel label = null;
-	// Allows wait windows close when user decides to do so
+	
+	/**
+	 *  Allows wait windows close when user decides to do so
+	 */
 	private JButton okButton = null;
-	// Container for label and button
+	
+	/**
+	 *  Container for label and button
+	 */
 	private JWindow message = null;
-	// Font used to customize message display for user
+	
+	/**
+	 *  Font used to customize message display for user
+	 */
 	Font font2 = new Font(Font.DIALOG, Font.PLAIN, 20);
 
 	public WaitWindow(FilesGUI gui) {
 
 		message = new JWindow(gui.getFrame());
 		message.setSize(400, 150);
-		//Provides layout and border for window
+		
+		/**
+		 * Provides layout and border for window
+		 */
 		JPanel panel = new JPanel(new GridLayout(2, 1));
-		//Container for proper button placement
+		
+		/**
+		 * Container for proper button placement
+		 */
 		JPanel panelB = new JPanel();
 		panel.setBorder(new LineBorder(Color.GRAY, 2));
 		message.getContentPane().add(panel, "Center");
@@ -53,8 +70,9 @@ public class WaitWindow {
 		panelB.add(okButton);
 		panel.add(panelB);
 		
-		// Pushing okButton closes the wait window and activates GUI main frame with all of it's 
-		// components, allowing further use of application.
+		/**
+		 *  Pushing okButton closes the wait window and activates GUI main frame with all of it's components, allowing further use of application.
+		 */
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				message.dispose();
