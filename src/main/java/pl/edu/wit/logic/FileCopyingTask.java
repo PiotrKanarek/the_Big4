@@ -102,11 +102,10 @@ public class FileCopyingTask implements Callable<Boolean> {
             if (mapFolders.containsKey(directory)) {
                 int counter = mapFolders.get(directory);
                 counter++;
-                int finalCounter = counter;
-                mapFolders.compute(directory, (k, v) -> (v == null ? 0 : finalCounter));
+                mapFolders.put(directory, counter);
                 return counter + ".jpg";
             } else {
-                mapFolders.compute(directory, (k, v) -> (v == null ? 0 : 1));
+                mapFolders.put(directory, 1);
                 return "1.jpg";
             }
         }
